@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  has_many :microposts, dependent: :destroy
+  
   attr_accessor :remember_token, :activation_token, :reset_token
 
   before_save :downcase_email
@@ -75,6 +77,12 @@ class User < ApplicationRecord
   # Возвращает true, если время для сброса пароля истекло.
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
+  end
+
+  # Определяет прото-ленту.
+  # Полная реализация приводится в разделе "Следование за пользователями".
+  def feed
+    Micropost.where("user_id = ?", id)
   end
 
   private
